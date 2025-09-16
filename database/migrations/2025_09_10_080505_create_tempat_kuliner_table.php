@@ -15,58 +15,50 @@ return new class extends Migration
     {
         Schema::create('tempat_kuliner', function (Blueprint $table) {
             $table->id('id_kuliner');
-            $table->unsignedBigInteger('id_tempat');
-
             // Identitas usaha
             $table->string('nama_usaha');
             $table->year('tahun_berdiri')->nullable();
             $table->string('nama_pemilik')->nullable();
-            $table->string('status_legalitas')->nullable(); // izin, NIB, halal
+            $table->string('status_legalitas')->nullable();
             $table->text('lokasi_lengkap');
-            $table->string('bentuk_kepemilikan')->nullable();
+            $table->enum('bentuk_kepemilikan', ['Individu', 'Keluarga', 'Komunitas', 'Waralaba'])->nullable();
 
             // Jenis kuliner
-            $table->string('kategori_utama'); // tradisional, modern, dll
+            $table->enum('kategori_utama', ['Tradisional', 'Modern', 'Fusion', 'Street Food'])->nullable();
             $table->string('menu_unggulan')->nullable();
-            $table->string('bahan_baku')->nullable();
-            $table->boolean('musiman')->default(false);
+            $table->set('bahan_baku', ['Lokal', 'Import'])->nullable();
+            $table->json('jenis_menu')->nullable();
 
             // Jenis tempat
-            $table->string('bentuk_fisik')->nullable();
-            $table->string('status_bangunan')->nullable();
+            $table->enum('bentuk_fisik', ['Warung Kaki Lima', 'Kedai Rumahan', 'Restoran', 'Gerobak Keliling'])->nullable();
+            $table->enum('status_bangunan', ['Milik Sendiri', 'Sewa', 'Tempat Publik'])->nullable();
             $table->text('fasilitas')->nullable();
 
             // Praktik K3
             $table->boolean('apd')->default(false);
             $table->text('prosedur_kebersihan')->nullable();
-            $table->text('pengelolaan_limbah')->nullable();
+            $table->text('sumber_bahan_dasar')->nullable();
+            $table->enum('pengelolaan_limbah', ['Organik', 'Non-Organik'])->nullable();
             $table->text('ventilasi')->nullable();
             $table->text('pelatihan_k3')->nullable();
 
             // Regulasi
-            $table->string('sertifikasi')->nullable();
+            $table->json('sertifikasi')->nullable();
             $table->boolean('kepatuhan_zonasi')->default(false);
             $table->boolean('kepatuhan_operasional')->default(false);
             $table->boolean('kepatuhan_pajak')->default(false);
-            $table->string('program_pemerintah')->nullable();
+            $table->json('program_pemerintah')->nullable();
 
             // Perkiraan pelanggan
             $table->integer('rata_pelanggan')->nullable();
-            $table->string('profil_pelanggan')->nullable();
-            $table->string('jam_sibuk')->nullable();
-            $table->string('metode_transaksi')->nullable();
+            $table->set('profil_pelanggan', ['Lokal', 'Wisatawan', 'Pelajar / Mahasiswa', 'Pekerja'])->nullable();
+            $table->set('metode_transaksi', ['Tunai', 'Qris', 'Online Delivery'])->nullable();
 
             // Longlat
-            $table->string('longitude')->nullable();
-            $table->string('latitude')->nullable();
+            $table->decimal('longitude', 10, 6)->nullable();
+            $table->decimal('latitude', 10, 6)->nullable();
 
             $table->timestamps();
-
-            $table->foreign('id_tempat')
-                ->references('id_tempat')
-                ->on('tempat')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
         });
     }
 
