@@ -8,11 +8,10 @@ class FotoWisata extends Model
     use HasFactory;
 
     protected $table = 'foto_wisata';
-    protected $primaryKey = 'id_foto';
-    protected $fillable = ['id_wisata','path_foto','keterangan'];
+    protected $fillable = ['id_wisata', 'path_foto', 'keterangan'];
 
     public function wisata()
     {
-        return $this->belongsTo(TempatWisata::class, 'id_wisata', 'id_wisata');
+        return $this->belongsTo(TempatWisata::class, 'id_wisata');
     }
 }

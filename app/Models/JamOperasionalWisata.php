@@ -5,13 +5,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class JamOperasionalWisata extends Model
 {
-    use HasFactory;
-
     protected $table = 'jam_operasional_wisata';
-    protected $fillable = ['id_wisata','hari','jam_buka','jam_tutup'];
+    protected $fillable = ['id_wisata', 'hari', 'jam_buka', 'jam_tutup'];
 
     public function wisata()
     {
-        return $this->belongsTo(TempatWisata::class, 'id_wisata', 'id_wisata');
+        return $this->belongsTo(TempatWisata::class, 'id_wisata');
     }
 }

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Tempat Wisata</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center">Daftar Tempat Wisata</h2>
+
+        <div class="mb-3 d-flex justify-content-between">
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary">← Kembali ke Dashboard</a>
+            <a href="{{ route('wisata.create') }}" class="btn btn-success">+ Tambah Wisata</a>
+        </div>
+
+        <!-- Alert jika sukses -->
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        <!-- Tabel -->
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>No</th>
+                    <th>Nama Wisata</th>
+                    <th>Kategori</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($wisata as $index => $w)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $w->nama_wisata }}</td>
+                        <td>{{ $w->kategori_wisata }}</td>
+                        <td>{{ $w->latitude }}</td>
+                        <td>{{ $w->longitude }}</td>
+                        <td>
+                            <a href="{{ route('wisata.edit', $w->id_wisata) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <form action="{{ route('wisata.destroy', $w->id_wisata) }}" method="POST"
+                                class="d-inline">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Yakin hapus?')">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center">Belum ada data.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>

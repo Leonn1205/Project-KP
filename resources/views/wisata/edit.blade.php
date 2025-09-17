@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Tambah Tempat Wisata</title>
+    <title>Edit Tempat Wisata</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -54,74 +54,79 @@
 <body>
     <div class="container">
         <h5 class="mt-4">Kotabaru Tourism Data Center</h5>
-        <h2>Tambah Tempat Wisata</h2>
+        <h2>Edit Tempat Wisata</h2>
 
         <div class="form-container shadow">
-            <form method="POST" action="{{ route('wisata.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('wisata.update', $wisata->id_wisata) }}" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
+
                 <div class="mb-3">
                     <label>Nama Tempat Wisata</label>
-                    <input type="text" name="nama_wisata" class="form-control" required>
+                    <input type="text" name="nama_wisata" class="form-control" value="{{ $wisata->nama_wisata }}"
+                        required>
                 </div>
                 <div class="mb-3">
                     <label>Kategori Tempat Wisata</label>
-                    <input type="text" name="kategori_wisata" class="form-control" required>
+                    <input type="text" name="kategori_wisata" class="form-control"
+                        value="{{ $wisata->kategori_wisata }}" required>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label>Longitude</label>
-                        <input type="text" name="longitude" class="form-control">
+                        <input type="text" name="longitude" class="form-control" value="{{ $wisata->longitude }}">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label>Latitude</label>
-                        <input type="text" name="latitude" class="form-control">
+                        <input type="text" name="latitude" class="form-control" value="{{ $wisata->latitude }}">
                     </div>
                 </div>
                 <div class="mb-3">
                     <label>Deskripsi Wisata</label>
-                    <textarea name="deskripsi" class="form-control" rows="3"></textarea>
+                    <textarea name="deskripsi" class="form-control" rows="3">{{ $wisata->deskripsi }}</textarea>
                 </div>
                 <div class="mb-3">
                     <label>Sejarah Wisata</label>
-                    <textarea name="sejarah" class="form-control" rows="3"></textarea>
+                    <textarea name="sejarah" class="form-control" rows="3">{{ $wisata->sejarah }}</textarea>
                 </div>
                 <div class="mb-3">
                     <label>Narasi Wisata</label>
-                    <textarea name="narasi" class="form-control" rows="3"></textarea>
+                    <textarea name="narasi" class="form-control" rows="3">{{ $wisata->narasi }}</textarea>
                 </div>
+
+                <!-- Jam Operasional (opsional, kalau mau diisi manual lagi) -->
                 <div class="row">
                     <div class="mb-3">
                         <label class="fw-bold">Jam Operasional</label>
                         <div class="row">
                             @php
                                 $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                                $jamOps = $wisata->jamOperasional->keyBy('hari');
                             @endphp
 
-                            @foreach ($days as $index => $day)
-                                <div class="col-md-12 mb-2">
-                                    <div class="d-flex align-items-center">
-                                        <label class="me-2" style="width:80px">{{ $day }}</label>
-
-                                        <span class="me-2">Buka</span>
+                            <h5>Jam Operasional</h5>
+                            @foreach ($days as $day)
+                                <div class="row mb-2">
+                                    <div class="col-md-2"><label>{{ $day }}</label></div>
+                                    <div class="col-md-2">Buka</div>
+                                    <div class="col-md-3">
                                         <input type="time" name="jam_buka[{{ $day }}]"
-                                            class="form-control me-2" style="max-width:150px">
-
-                                        <span class="me-2">Tutup</span>
+                                            value="{{ $jamOps[$day]->jam_buka ?? '' }}" class="form-control">
+                                    </div>
+                                    <div class="col-md-2">Tutup</div>
+                                    <div class="col-md-3">
                                         <input type="time" name="jam_tutup[{{ $day }}]"
-                                            class="form-control me-2" style="max-width:150px">
-
-                                        <div class="form-check ms-3">
-                                            <input class="form-check-input tutup-check" type="checkbox"
-                                                name="libur[{{ $day }}]" value="1"
-                                                id="libur_{{ $day }}">
-                                            <label class="form-check-label" for="libur_{{ $day }}">
-                                                Tutup
-                                            </label>
-                                        </div>
+                                            value="{{ $jamOps[$day]->jam_tutup ?? '' }}" class="form-control">
+                                    </div>
+                                    <div class="col-md-2 mt-2">
+                                        <input type="checkbox" name="libur[{{ $day }}]" value="1"
+                                            {{ empty($jamOps[$day]->jam_buka) && empty($jamOps[$day]->jam_tutup) ? 'checked' : '' }}>
+                                        Libur
                                     </div>
                                 </div>
                             @endforeach
                         </div>
+                        <small class="text-muted">Kosongkan jika tidak ada pergantian jam</small>
                     </div>
 
                     <script>
@@ -144,14 +149,24 @@
                             });
                         });
                     </script>
-                    <div class="col-md-6 mb-3">
-                        <label>Upload Foto</label>
+
+                    <div class="mb-3">
+                        <label>Foto Lama</label><br>
+                        @foreach ($wisata->foto as $f)
+                            <img src="{{ asset('storage/' . $f->path_foto) }}" alt="Foto {{ $wisata->nama_wisata }}"
+                                width="100" class="me-2 mb-2">
+                        @endforeach
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Upload Foto Baru</label>
                         <input type="file" name="foto[]" class="form-control" multiple>
                     </div>
                 </div>
 
                 <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-submit">Submit</button>
+                    <button type="submit" class="btn btn-submit">Update</button>
+                    <a href="{{ route('wisata.index') }}" class="btn btn-secondary">Batal</a>
                 </div>
             </form>
         </div>
