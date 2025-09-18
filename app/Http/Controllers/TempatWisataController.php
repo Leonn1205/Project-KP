@@ -22,7 +22,6 @@ class TempatWisataController extends Controller
         return view('wisata.create');
     }
 
-    // POST /dashboard/wisata
     public function store(Request $request)
     {
         $request->validate([
@@ -44,7 +43,7 @@ class TempatWisataController extends Controller
 
         // Foto
         if ($request->hasFile('foto')) {
-            foreach ((array) $request->file('foto') as $file) {
+            foreach ($request->file('foto') as $file) {
                 $path = $file->store('wisata', 'public');
                 FotoWisata::create([
                     'id_wisata' => $wisata->id_wisata,
@@ -53,30 +52,24 @@ class TempatWisataController extends Controller
             }
         }
 
-        // Jam operasional
-        $days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+        // Jam Operasional
+        if ($request->filled('hari')) {
+            foreach ($request->hari as $index => $hari) {
+                $isLibur = isset($request->libur[$index]) && $request->libur[$index] == 1;
 
-        foreach ($days as $day) {
-            $jam_buka = $request->jam_buka[$day] ?? null;
-            $jam_tutup = $request->jam_tutup[$day] ?? null;
-
-            // Kalau ada checkbox libur
-            if ($request->has("libur.$day")) {
-                $jam_buka = null;
-                $jam_tutup = null;
+                JamOperasionalWisata::create([
+                    'id_wisata' => $wisata->id_wisata,
+                    'hari' => $hari,
+                    'jam_buka' => $isLibur ? null : ($request->jam_buka[$index] ?? null),
+                    'jam_tutup' => $isLibur ? null : ($request->jam_tutup[$index] ?? null),
+                ]);
             }
-
-            JamOperasionalWisata::create([
-                'id_wisata' => $wisata->id_wisata,
-                'hari' => $day,
-                'jam_buka' => $jam_buka,
-                'jam_tutup' => $jam_tutup,
-            ]);
         }
 
         return redirect()->route('wisata.index')
             ->with('success','Tempat wisata berhasil ditambahkan!');
     }
+
 
     // GET /dashboard/wisata/{id}/edit
     public function edit($id)
@@ -85,7 +78,7 @@ class TempatWisataController extends Controller
         return view('wisata.edit', compact('wisata'));
     }
 
-    // PUT /dashboard/wisata/{id}
+    // Update
     public function update(Request $request, $id)
     {
         $wisata = TempatWisata::findOrFail($id);
@@ -107,28 +100,26 @@ class TempatWisataController extends Controller
             }
         }
 
-        // Update jam operasional
-        $days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
-        foreach ($days as $day) {
-            $jam = JamOperasionalWisata::firstOrNew([
-                'id_wisata' => $wisata->id_wisata,
-                'hari' => $day,
-            ]);
+        // Update jam operasional → hapus semua dulu biar bersih
+        $wisata->jamOperasional()->delete();
 
-            if ($request->has("libur.$day")) {
-                $jam->jam_buka = null;
-                $jam->jam_tutup = null;
-            } else {
-                $jam->jam_buka = $request->jam_buka[$day] ?? null;
-                $jam->jam_tutup = $request->jam_tutup[$day] ?? null;
+        if ($request->filled('hari')) {
+            foreach ($request->hari as $index => $hari) {
+                $isLibur = isset($request->libur[$index]) && $request->libur[$index] == 1;
+
+                JamOperasionalWisata::create([
+                    'id_wisata' => $wisata->id_wisata,
+                    'hari' => $hari,
+                    'jam_buka' => $isLibur ? null : ($request->jam_buka[$index] ?? null),
+                    'jam_tutup' => $isLibur ? null : ($request->jam_tutup[$index] ?? null),
+                ]);
             }
-
-            $jam->save();
         }
 
         return redirect()->route('wisata.index')
             ->with('success','Data berhasil diperbarui!');
     }
+
 
     // DELETE /dashboard/wisata/{id}
     public function destroy($id)

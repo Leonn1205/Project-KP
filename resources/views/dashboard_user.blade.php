@@ -100,7 +100,7 @@
             <a href="{{ route('wisata.index') }}">
                 <i class="bi bi-building me-2"></i> Tempat Wisata
             </a>
-            <a href="#">
+            <a href="{{ route('kuliner.index') }}">
                 <i class="bi bi-egg-fried me-2"></i> Tempat Kuliner
             </a>
         </div>
@@ -108,8 +108,27 @@
         <!-- Content -->
         <div class="col-md-10">
             <div class="container mt-4">
-                <!-- Peta -->
-                <div id="map"></div>
+                <div class="row">
+                    <!-- Map -->
+                    <div id="map-container" class="col-md-12">
+                        <div id="map" style="height:500px;"></div>
+                    </div>
+
+                    <!-- Panel detail -->
+                    <div id="detail-container" class="col-md-4" style="display:none;">
+                        <div id="detail-panel" class="p-3 bg-white border rounded shadow-sm"
+                            style="max-height:500px; overflow-y:auto;">
+                            <h4 id="detail-nama" class="fw-bold"></h4>
+                            <p><b>Kategori:</b> <span id="detail-kategori"></span></p>
+                            <p id="detail-deskripsi"></p>
+                            <h6>Jam Operasional:</h6>
+                            <ul id="detail-jam"></ul>
+                            <h6>Foto:</h6>
+                            <div id="detail-foto" class="row"></div>
+                            <a id="detail-link" href="#" class="btn btn-success mt-3">Lihat Selengkapnya</a>
+                        </div>
+                    </div>
+                </div>
 
                 <script>
                     var map = L.map('map').setView([-7.78694, 110.375], 15);
@@ -120,37 +139,101 @@
                         maxZoom: 20
                     }).addTo(map);
 
+                    let currentMarkerId = null;
+
+                    // 🔹 Tempat Wisata
                     @foreach ($wisata as $w)
-                        @if ($w->latitude && $w->longitude)
-                            var marker = L.marker([{{ $w->latitude }}, {{ $w->longitude }}]).addTo(map);
+                        if ("{{ $w->latitude }}" && "{{ $w->longitude }}") {
+                            var wisataIcon = L.icon({
+                                iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                                iconSize: [32, 32],
+                                iconAnchor: [16, 32],
+                                popupAnchor: [0, -32]
+                            });
+                            var marker = L.marker([{{ $w->latitude }}, {{ $w->longitude }}], { icon:wisataIcon }).addTo(map);
 
                             marker.on('click', function() {
-                                fetch("{{ route('wisata.show', $w->id_wisata) }}")
-                                    .then(response => response.text())
-                                    .then(html => {
-                                        document.getElementById("wisataModalContent").innerHTML = html;
-                                        var modal = new bootstrap.Modal(document.getElementById("wisataModal"));
-                                        modal.show();
-                                    });
+                                showDetail("wisata-{{ $w->id_wisata }}", {
+                                    nama: "{{ $w->nama_wisata }}",
+                                    kategori: "{{ $w->kategori_wisata }}",
+                                    deskripsi: "{{ $w->deskripsi ?? '-' }}",
+                                    link: "{{ route('wisata.show', $w->id_wisata) }}",
+                                    jam: `{!! collect($w->jamOperasional)->map(function ($jam) {
+                                            return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
+                                                ? "<li><b>{$jam->hari}:</b> Libur</li>"
+                                                : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
+                                        })->implode('') !!}`,
+                                    foto: `{!! collect($w->foto)->map(function ($f) {
+                                            return "<div class='col-md-6 mb-2'><img src='" .
+                                                asset('storage/' . $f->path_foto) .
+                                                "' class='img-fluid rounded'></div>";
+                                        })->implode('') !!}`
+                                }, [{{ $w->latitude }}, {{ $w->longitude }}]);
                             });
-                        @endif
+                        }
                     @endforeach
-                </script>
 
-                <div class="modal fade" id="wisataModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header bg-success text-white">
-                                <h5 class="modal-title">Detail Tempat Wisata</h5>
-                                <button type="button" class="btn-close btn-close-white"
-                                    data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body" id="wisataModalContent">
-                                <p class="text-muted">Memuat data...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    // 🔹 Tempat Kuliner
+                    @foreach ($kuliner as $k)
+                        if ("{{ $k->latitude }}" && "{{ $k->longitude }}") {
+                            var kulinerIcon = L.icon({
+                                iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                                iconSize: [32, 32],
+                                iconAnchor: [16, 32],
+                                popupAnchor: [0, -32]
+                            });
+                            var marker = L.marker([{{ $k->latitude }}, {{ $k->longitude }}], { icon:kulinerIcon }).addTo(map);
+
+                            marker.on('click', function() {
+                                showDetail("kuliner-{{ $k->id_kuliner }}", {
+                                    nama: "{{ $k->nama_usaha }}",
+                                    kategori: "{{ $k->kategori_utama ?? '-' }}",
+                                    deskripsi: "{{ $k->menu_unggulan ?? '-' }}",
+                                    link: "{{ route('kuliner.show', $k->id_kuliner) }}",
+                                    jam: `{!! collect($k->jamOperasional)->map(function ($jam) {
+                                            return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
+                                                ? "<li><b>{$jam->hari}:</b> Libur</li>"
+                                                : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
+                                        })->implode('') !!}`,
+                                    foto: `{!! collect($k->foto)->map(function ($f) {
+                                            return "<div class='col-md-6 mb-2'><img src='" .
+                                                asset('storage/' . $f->path_foto) .
+                                                "' class='img-fluid rounded'></div>";
+                                        })->implode('') !!}`
+                                }, [{{ $k->latitude }}, {{ $k->longitude }}]);
+                            });
+                        }
+                    @endforeach
+
+                    // 🔹 Fungsi tampilkan detail
+                    function showDetail(markerId, data, coords) {
+                        let detailContainer = document.getElementById('detail-container');
+                        let mapContainer = document.getElementById('map-container');
+
+                        if (currentMarkerId === markerId) {
+                            detailContainer.style.display = 'none';
+                            mapContainer.classList.remove('col-md-8');
+                            mapContainer.classList.add('col-md-12');
+                            currentMarkerId = null;
+                            map.invalidateSize();
+                        } else {
+                            detailContainer.style.display = 'block';
+                            mapContainer.classList.remove('col-md-12');
+                            mapContainer.classList.add('col-md-8');
+                            currentMarkerId = markerId;
+
+                            document.getElementById('detail-nama').innerText = data.nama;
+                            document.getElementById('detail-kategori').innerText = data.kategori;
+                            document.getElementById('detail-deskripsi').innerText = data.deskripsi;
+                            document.getElementById('detail-link').href = data.link;
+                            document.getElementById('detail-jam').innerHTML = data.jam;
+                            document.getElementById('detail-foto').innerHTML = data.foto;
+
+                            map.setView(coords, 17);
+                            map.invalidateSize();
+                        }
+                    }
+                </script>
 
                 <!-- Ringkasan -->
                 <h5 class="mb-3">Ringkasan Data</h5>
@@ -163,7 +246,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="stat-box">
-                            <h3>0</h3>
+                            <h3>{{ $kuliner->count() }}</h3>
                             <p>Lokasi Kuliner</p>
                         </div>
                     </div>
@@ -171,6 +254,7 @@
             </div>
         </div>
     </div>
+
 
 </body>
 

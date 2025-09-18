@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TempatWisataController;
+use App\Http\Controllers\TempatKulinerController;
 
 
 /*
@@ -29,3 +30,5 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dashboard_user', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::resource('dashboard/wisata', TempatWisataController::class);
+
+Route::resource('dashboard/kuliner', TempatKulinerController::class);
