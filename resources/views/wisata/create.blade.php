@@ -115,7 +115,7 @@
                                                 name="libur[{{ $day }}]" value="1"
                                                 id="libur_{{ $day }}">
                                             <label class="form-check-label" for="libur_{{ $day }}">
-                                                Tutup
+                                                Libur
                                             </label>
                                         </div>
                                     </div>

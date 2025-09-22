@@ -176,11 +176,15 @@
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Pengelolaan Limbah</label>
-                        <select name="pengelolaan_limbah" class="form-select">
-                            <option value="Organik">Organik</option>
-                            <option value="Non-Organik">Non-Organik</option>
-                        </select>
+                        <label class="form-label">Pengelolaan Limbah</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="pengelolaan_limbah[]" value="Seasonal">
+                            <label class="form-check-label">Organik</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="pengelolaan_limbah[]" value="Tetap">
+                            <label class="form-check-label">Non-Organik</label>
+                        </div>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -227,17 +231,17 @@
                 <!-- Kepatuhan (boolean) -->
                 <div class="mb-3">
                     <label class="form-label">Kepatuhan Zonasi</label><br>
-                    <input type="checkbox" name="kepatuhan_zonasi" value="1"> Ya
+                    <textarea name="kepatuhan_zonasi" class="form-control"></textarea>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Kepatuhan Operasional</label><br>
-                    <input type="checkbox" name="kepatuhan_operasional" value="1"> Ya
+                    <textarea name="kepatuhan_operasional" class="form-control"></textarea>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Kepatuhan Pajak</label><br>
-                    <input type="checkbox" name="kepatuhan_pajak" value="1"> Ya
+                    <textarea name="kepatuhan_pajak" class="form-control"></textarea>
                 </div>
 
                 <!-- Program Pemerintah -->

@@ -36,13 +36,13 @@ class TempatKulinerController extends Controller
         $data = $request->all();
 
         // Handle array/checkbox → simpan string/json
-        $data['bahan_baku'] = $request->bahan_baku ? implode(',', $request->bahan_baku) : null;
-        $data['profil_pelanggan'] = $request->profil_pelanggan ? implode(',', $request->profil_pelanggan) : null;
-        $data['metode_transaksi'] = $request->metode_transaksi ? implode(',', $request->metode_transaksi) : null;
-
-        $data['jenis_menu'] = $request->jenis_menu ? json_encode($request->jenis_menu) : null;
-        $data['sertifikasi'] = $request->sertifikasi ? json_encode($request->sertifikasi) : null;
-        $data['program_pemerintah'] = $request->program_pemerintah ? json_encode($request->program_pemerintah) : null;
+        $data['bahan_baku'] = $request->bahan_baku ? json_encode($request->bahan_baku ?? []) : null;
+        $data['profil_pelanggan'] = $request->profil_pelanggan ? json_encode($request->profil_pelanggan ?? []) : null;
+        $data['metode_transaksi'] = $request->metode_transaksi ? json_encode($request->metode_transaksi ?? []) : null;
+        $data['pengelolaan_limbah'] = $request->pengelolaan_limbah ? json_encode($request->pengelolaan_limbah ?? []) : null;
+        $data['jenis_menu'] = $request->jenis_menu ? json_encode($request->jenis_menu ?? []) : null;
+        $data['sertifikasi'] = $request->sertifikasi ? json_encode($request->sertifikasi ?? []) : null;
+        $data['program_pemerintah'] = $request->program_pemerintah ? json_encode($request->program_pemerintah ?? []) : null;
 
         // Simpan data utama
         $kuliner = TempatKuliner::create($data);

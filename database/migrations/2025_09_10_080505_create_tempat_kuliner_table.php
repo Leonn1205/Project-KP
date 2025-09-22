@@ -26,7 +26,7 @@ return new class extends Migration
             // Jenis kuliner
             $table->enum('kategori_utama', ['Tradisional', 'Modern', 'Fusion', 'Street Food'])->nullable();
             $table->string('menu_unggulan')->nullable();
-            $table->set('bahan_baku', ['Lokal', 'Import'])->nullable();
+            $table->json('bahan_baku', ['Lokal', 'Import'])->nullable();
             $table->json('jenis_menu')->nullable();
 
             // Jenis tempat
@@ -38,21 +38,21 @@ return new class extends Migration
             $table->boolean('apd')->default(false);
             $table->text('prosedur_kebersihan')->nullable();
             $table->text('sumber_bahan_dasar')->nullable();
-            $table->enum('pengelolaan_limbah', ['Organik', 'Non-Organik'])->nullable();
+            $table->json('pengelolaan_limbah', ['Organik', 'Non-Organik'])->nullable();
             $table->text('ventilasi')->nullable();
             $table->text('pelatihan_k3')->nullable();
 
             // Regulasi
             $table->json('sertifikasi')->nullable();
-            $table->boolean('kepatuhan_zonasi')->default(false);
-            $table->boolean('kepatuhan_operasional')->default(false);
-            $table->boolean('kepatuhan_pajak')->default(false);
+            $table->text('kepatuhan_zonasi')->nullable();
+            $table->text('kepatuhan_operasional')->nullable();
+            $table->text('kepatuhan_pajak')->nullable();
             $table->json('program_pemerintah')->nullable();
 
             // Perkiraan pelanggan
             $table->integer('rata_pelanggan')->nullable();
-            $table->set('profil_pelanggan', ['Lokal', 'Wisatawan', 'Pelajar / Mahasiswa', 'Pekerja'])->nullable();
-            $table->set('metode_transaksi', ['Tunai', 'Qris', 'Online Delivery'])->nullable();
+            $table->json('profil_pelanggan', ['Lokal', 'Wisatawan', 'Pelajar / Mahasiswa', 'Pekerja'])->nullable();
+            $table->json('metode_transaksi', ['Tunai', 'Qris', 'Online Delivery'])->nullable();
 
             // Longlat
             $table->decimal('longitude', 10, 6)->nullable();
