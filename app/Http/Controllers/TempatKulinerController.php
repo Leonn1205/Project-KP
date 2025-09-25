@@ -41,8 +41,22 @@ class TempatKulinerController extends Controller
         $data['metode_transaksi'] = $request->metode_transaksi ? json_encode($request->metode_transaksi ?? []) : null;
         $data['pengelolaan_limbah'] = $request->pengelolaan_limbah ? json_encode($request->pengelolaan_limbah ?? []) : null;
         $data['jenis_menu'] = $request->jenis_menu ? json_encode($request->jenis_menu ?? []) : null;
-        $data['sertifikasi'] = $request->sertifikasi ? json_encode($request->sertifikasi ?? []) : null;
-        $data['program_pemerintah'] = $request->program_pemerintah ? json_encode($request->program_pemerintah ?? []) : null;
+
+        $sertifikasi = $request->input('sertifikasi', []);
+        if (in_array('Dll', $sertifikasi)) {
+            $dll = trim($request->input('sertifikasi_dll'));
+            $key = array_search('Dll', $sertifikasi);
+            $sertifikasi[$key] = $dll ? 'Dll: ' . $dll : 'Dll';
+        }
+        $data['sertifikasi'] = $sertifikasi;
+
+        $program = $request->input('program_pemerintah', []);
+        if (in_array('Lainnya', $program)) {
+            $dll = trim($request->input('program_dll'));
+            $key = array_search('Dll', $program);
+            $program[$key] = $dll ? 'Dll: ' . $dll : 'Dll';
+        }
+        $data['program_pemerintah'] = $program;
 
         // Simpan data utama
         $kuliner = TempatKuliner::create($data);
@@ -78,7 +92,26 @@ class TempatKulinerController extends Controller
     public function edit($id)
     {
         $kuliner = TempatKuliner::with(['foto','jamOperasional'])->findOrFail($id);
-        return view('kuliner.edit', compact('kuliner'));
+
+        $sertifikasiRaw = $kuliner->sertifikasi ?? [];
+        $sertifikasi = is_string($sertifikasiRaw) ? json_decode($sertifikasiRaw, true) : $sertifikasiRaw;
+
+        $dllText = '';
+        foreach ($sertifikasi as $item) {
+            if (str_starts_with($item, 'Dll:')) {
+                $dllText = trim(substr($item, 4)); // Dll: teks
+            }
+        }
+
+        $programRaw = $kuliner->program_pemerintah ?? [];
+        $program = is_string($programRaw) ? json_decode($programRaw, true) : $programRaw;
+        $programDll = '';
+        foreach ($program as $item) {
+            if (str_starts_with($item, 'Dll:')) {
+                $programDll = trim(substr($item, 4)); // Dll: teks
+            }
+        }
+        return view('kuliner.edit', compact('kuliner', 'dllText', 'programDll', 'sertifikasi', 'program'));
     }
 
     public function update(Request $request, $id)
@@ -89,13 +122,13 @@ class TempatKulinerController extends Controller
         $data = $request->all();
 
         // Handle array/checkbox → simpan string/json
-        $data['bahan_baku'] = $request->bahan_baku ? implode(',', $request->bahan_baku) : null;
-        $data['profil_pelanggan'] = $request->profil_pelanggan ? implode(',', $request->profil_pelanggan) : null;
-        $data['metode_transaksi'] = $request->metode_transaksi ? implode(',', $request->metode_transaksi) : null;
-
-        $data['jenis_menu'] = $request->jenis_menu ? json_encode($request->jenis_menu) : null;
-        $data['sertifikasi'] = $request->sertifikasi ? json_encode($request->sertifikasi) : null;
-        $data['program_pemerintah'] = $request->program_pemerintah ? json_encode($request->program_pemerintah) : null;
+        $data['bahan_baku'] = $request->bahan_baku ? json_encode($request->bahan_baku ?? []) : null;
+        $data['profil_pelanggan'] = $request->profil_pelanggan ? json_encode($request->profil_pelanggan ?? []) : null;
+        $data['metode_transaksi'] = $request->metode_transaksi ? json_encode($request->metode_transaksi ?? []) : null;
+        $data['pengelolaan_limbah'] = $request->pengelolaan_limbah ? json_encode($request->pengelolaan_limbah ?? []) : null;
+        $data['jenis_menu'] = $request->jenis_menu ? json_encode($request->jenis_menu ?? []) : null;
+        $data['sertifikasi'] = $this->handleSertifikasiInput($request);
+        $data['program_pemerintah'] = $this->handleProgramInput($request);
 
         // Update data utama
         $kuliner->update($data);
@@ -153,4 +186,27 @@ class TempatKulinerController extends Controller
             TempatKuliner::with(['foto','jamOperasional'])->get()
         );
     }
+
+    private function handleProgramInput(Request $request)
+    {
+        $program = $request->input('program_pemerintah', []);
+        if (in_array('Dll', $program)) {
+            $dll = trim($request->input('program_dll'));
+            $key = array_search('Dll', $program);
+            $program[$key] = $dll ? 'Dll: ' . $dll : 'Dll';
+        }
+        return $program;
+    }
+
+    private function handleSertifikasiInput(Request $request)
+    {
+        $sertifikasi = $request->input('sertifikasi', []);
+        if (in_array('Dll', $sertifikasi)) {
+            $dll = trim($request->input('sertifikasi_dll'));
+            $key = array_search('Dll', $sertifikasi);
+            $sertifikasi[$key] = $dll ? 'Dll: ' . $dll : 'Dll';
+        }
+        return $sertifikasi;
+    }
+
 }

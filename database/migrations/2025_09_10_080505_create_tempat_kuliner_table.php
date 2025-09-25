@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id('id_kuliner');
             // Identitas usaha
             $table->string('nama_usaha');
-            $table->year('tahun_berdiri')->nullable();
+            $table->integer('tahun_berdiri')->nullable();
             $table->string('nama_pemilik')->nullable();
             $table->string('status_legalitas')->nullable();
             $table->text('lokasi_lengkap');

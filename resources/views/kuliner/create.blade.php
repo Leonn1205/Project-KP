@@ -178,11 +178,13 @@
                     <div class="col-md-4">
                         <label class="form-label">Pengelolaan Limbah</label><br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="pengelolaan_limbah[]" value="Seasonal">
+                            <input class="form-check-input" type="checkbox" name="pengelolaan_limbah[]"
+                                value="Seasonal">
                             <label class="form-check-label">Organik</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="pengelolaan_limbah[]" value="Tetap">
+                            <input class="form-check-input" type="checkbox" name="pengelolaan_limbah[]"
+                                value="Tetap">
                             <label class="form-check-label">Non-Organik</label>
                         </div>
                     </div>
@@ -205,7 +207,25 @@
                 </div>
             </div>
 
-            <!-- 5. Regulasi -->
+            @php
+                // Decode data JSON/array dari DB
+                $sertifikasi = is_array($kuliner->sertifikasi)
+                    ? $kuliner->sertifikasi
+                    : json_decode($kuliner->sertifikasi ?? '[]', true);
+                $program = is_array($kuliner->program_pemerintah)
+                    ? $kuliner->program_pemerintah
+                    : json_decode($kuliner->program_pemerintah ?? '[]', true);
+
+                // Cari nilai "Dll: ..." di sertifikasi
+                $dllValue = collect($sertifikasi)->first(fn($item) => Str::startsWith($item, 'Dll:')) ?? '';
+                $dllText = $dllValue ? trim(Str::after($dllValue, 'Dll:')) : '';
+
+                // Cari nilai "DII: ..." di program
+                $diiValue = collect($program)->first(fn($item) => Str::startsWith($item, 'DII:')) ?? '';
+                $diiText = $diiValue ? trim(Str::after($diiValue, 'DII:')) : '';
+            @endphp
+
+            <!-- SECTION 5: Regulasi -->
             <div class="section">
                 <h3 class="section-title">5. Regulasi</h3>
 
@@ -213,50 +233,54 @@
                 <div class="mb-3">
                     <label class="form-label">Sertifikasi</label><br>
                     <label class="me-3">
-                        <input type="checkbox" name="sertifikasi[]" value="PIRT"> PIRT
+                        <input type="checkbox" name="sertifikasi[]" value="PIRT"
+                            {{ in_array('PIRT', $sertifikasi) ? 'checked' : '' }}> PIRT
                     </label>
                     <label class="me-3">
-                        <input type="checkbox" name="sertifikasi[]" value="BPOM"> BPOM
+                        <input type="checkbox" name="sertifikasi[]" value="BPOM"
+                            {{ in_array('BPOM', $sertifikasi) ? 'checked' : '' }}> BPOM
                     </label>
                     <label class="me-3">
-                        <input type="checkbox" name="sertifikasi[]" value="Halal"> Halal
+                        <input type="checkbox" name="sertifikasi[]" value="Halal"
+                            {{ in_array('Halal', $sertifikasi) ? 'checked' : '' }}> Halal
                     </label>
-                    <label class="me-3">
-                        <input type="checkbox" name="sertifikasi[]" value="DII"> DII
-                        <input type="text" name="sertifikasi_dii" class="form-control d-inline-block ms-2"
-                            style="width:150px;" placeholder="No. DII">
+                    <label class="me-3 d-flex align-items-center">
+                        <input type="checkbox" name="sertifikasi[]" value="Dll" {{ $dllText ? 'checked' : '' }}>
+                        Dll
+                        <input type="text" name="sertifikasi_dll" class="form-control ms-2" style="width:150px;"
+                            placeholder="Isi sertifikasi lain" value="{{ $dllText }}">
                     </label>
                 </div>
 
-                <!-- Kepatuhan (boolean) -->
                 <div class="mb-3">
-                    <label class="form-label">Kepatuhan Zonasi</label><br>
-                    <textarea name="kepatuhan_zonasi" class="form-control"></textarea>
+                    <label class="form-label">Kepatuhan Zonasi</label>
+                    <textarea name="kepatuhan_zonasi" class="form-control">{{ $kuliner->kepatuhan_zonasi }}</textarea>
                 </div>
-
                 <div class="mb-3">
-                    <label class="form-label">Kepatuhan Operasional</label><br>
-                    <textarea name="kepatuhan_operasional" class="form-control"></textarea>
+                    <label class="form-label">Kepatuhan Operasional</label>
+                    <textarea name="kepatuhan_operasional" class="form-control">{{ $kuliner->kepatuhan_operasional }}</textarea>
                 </div>
-
                 <div class="mb-3">
-                    <label class="form-label">Kepatuhan Pajak</label><br>
-                    <textarea name="kepatuhan_pajak" class="form-control"></textarea>
+                    <label class="form-label">Kepatuhan Pajak</label>
+                    <textarea name="kepatuhan_pajak" class="form-control">{{ $kuliner->kepatuhan_pajak }}</textarea>
                 </div>
 
                 <!-- Program Pemerintah -->
                 <div class="mb-3">
                     <label class="form-label">Program Pemerintah</label><br>
                     <label class="me-3">
-                        <input type="checkbox" name="program_pemerintah[]" value="Kuliner Sehat"> Kuliner Sehat
+                        <input type="checkbox" name="program_pemerintah[]" value="Kuliner Sehat"
+                            {{ in_array('Kuliner Sehat', $program) ? 'checked' : '' }}> Kuliner Sehat
                     </label>
                     <label class="me-3">
-                        <input type="checkbox" name="program_pemerintah[]" value="UMKM Binaan"> UMKM Binaan
+                        <input type="checkbox" name="program_pemerintah[]" value="UMKM Binaan"
+                            {{ in_array('UMKM Binaan', $program) ? 'checked' : '' }}> UMKM Binaan
                     </label>
-                    <label class="me-3">
-                        <input type="checkbox" name="program_pemerintah[]" value="DII"> DII
-                        <input type="text" name="program_dii" class="form-control d-inline-block ms-2"
-                            style="width:150px;" placeholder="No. DII">
+                    <label class="me-3 d-flex align-items-center">
+                        <input type="checkbox" name="program_pemerintah[]" value="DII"
+                            {{ $diiText ? 'checked' : '' }}> DII
+                        <input type="text" name="program_dii" class="form-control ms-2" style="width:150px;"
+                            placeholder="No. DII" value="{{ $diiText }}">
                     </label>
                 </div>
             </div>
