@@ -7,9 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: url('{{ asset('bg.jpg') }}') no-repeat center center fixed;
+            font-family: 'Inknut Antiqua', serif;
+            background: url("{{ asset('images/bg-view.png') }}") no-repeat center center fixed;
             background-size: cover;
-            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .container-form {
@@ -266,11 +269,11 @@
                         <div class="d-flex align-items-center">
                             <label class="mb-0 me-2">
                                 <input type="checkbox" name="program_pemerintah[]" value="Dll"
-                                    {{ $programText ? 'checked' : '' }}> Dll
+                                    {{ $programDll ? 'checked' : '' }}> Dll
                             </label>
                             <input type="text" name="program_dll" class="form-control form-control-sm"
                                 style="width: 150px;" placeholder="Isi program lain"
-                                value="{{ old('program_dll', $programText) }}">
+                                value="{{ old('program_dll', $programDll) }}">
                         </div>
                     </div>
                 </div>

@@ -8,8 +8,11 @@
     <style>
         body {
             font-family: 'Inknut Antiqua', serif;
-            background: url("{{ asset('images/bg-kotabaru.jpg') }}") no-repeat center center fixed;
+            background: url("{{ asset('images/bg-view.png') }}") no-repeat center center fixed;
             background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .form-container {

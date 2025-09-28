@@ -5,6 +5,16 @@
     <meta charset="UTF-8">
     <title>Daftar Tempat Kuliner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inknut Antiqua', serif;
+            background: url("{{ asset('images/bg-view.png') }}") no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
 
 <body class="bg-light p-4">
