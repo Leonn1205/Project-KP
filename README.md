@@ -37,19 +37,6 @@ php artisan key:generate
 php artisan migrate --seed
 php artisan serve
 
-📂 Struktur Proyek Utama
-resources/views/
-├── dashboard/         # Halaman utama admin
-├── kuliner/           # Form create/edit/view kuliner
-├── wisata/            # Form create/edit/view wisata
-├── auth/              # Login, register, dsb
-routes/
-└── web.php            # Routing utama
-app/Models/
-└── TempatKuliner.php  # Model utama kuliner
-public/images/
-└── bg-view.png        # Background utama
-
 🤝 Kontribusi
 
 Ini adalah bagian dari Proyek Kerja Praktik & Skripsi — jika kamu tertarik mengembangkan sistem ini lebih lanjut, kontribusi dalam bentuk feedback, fitur tambahan, atau debugging sangat disambut.
