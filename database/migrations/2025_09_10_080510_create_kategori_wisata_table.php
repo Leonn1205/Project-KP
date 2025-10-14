@@ -13,11 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id("id_user");
-            $table->string('username')->unique();
-            $table->string('password');
-            $table->enum('role', ['Super Admin','Admin', 'User'])->default('user');
+        Schema::create('kategori_wisata', function (Blueprint $table) {
+            $table->id("id_kategori");
+            $table->string('nama_kategori');
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('kategori_wisata');
     }
 };

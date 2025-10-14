@@ -10,34 +10,14 @@
             font-family: 'Inknut Antiqua', serif;
             background: url("{{ asset('images/bg-view.png') }}") no-repeat center center fixed;
             background-size: cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         .form-container {
             background: rgba(255, 255, 255, 0.85);
             padding: 30px;
             border-radius: 15px;
-            max-width: 800px;
+            max-width: 900px;
             margin: 40px auto;
-        }
-
-        h5 {
-            text-align: center;
-            font-weight: bold;
-        }
-
-        h2 {
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #1e3932;
-        }
-
-        label {
-            font-weight: 600;
-            margin-top: 10px;
         }
 
         .btn-submit {
@@ -56,101 +36,112 @@
 
 <body>
     <div class="container">
-        <h5 class="mt-4">Kotabaru Tourism Data Center</h5>
-        <h2>Tambah Tempat Wisata</h2>
+        <h5 class="mt-4 text-center fw-bold">Kotabaru Tourism Data Center</h5>
+        <h2 class="text-center fw-bold text-success mb-4">Tambah Tempat Wisata</h2>
 
         <div class="form-container shadow">
             <form method="POST" action="{{ route('wisata.store') }}" enctype="multipart/form-data">
                 @csrf
+
                 <div class="mb-3">
                     <label>Nama Tempat Wisata</label>
                     <input type="text" name="nama_wisata" class="form-control" required>
+                    <small class="form-text text-muted">Contoh: Pantai Gedambaan</small>
                 </div>
+
                 <div class="mb-3">
-                    <label>Kategori Tempat Wisata</label>
-                    <input type="text" name="kategori_wisata" class="form-control" required>
+                    <label for="id_kategori">Kategori Wisata</label>
+                    <select name="id_kategori" class="form-control" required>
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach ($kategori as $k)
+                            <option value="{{ $k->id_kategori }}">{{ $k->nama_kategori }}</option>
+                        @endforeach
+                    </select>
+                    <small class="form-text text-muted">Kategori ditentukan oleh admin</small>
                 </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label>Longitude</label>
                         <input type="text" name="longitude" class="form-control">
+                        <small class="form-text text-muted">Contoh: 116.8225</small>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label>Latitude</label>
                         <input type="text" name="latitude" class="form-control">
+                        <small class="form-text text-muted">Contoh: -3.3211</small>
                     </div>
                 </div>
+
                 <div class="mb-3">
                     <label>Deskripsi Wisata</label>
                     <textarea name="deskripsi" class="form-control" rows="3"></textarea>
+                    <small class="form-text text-muted">Gambaran umum wisata</small>
                 </div>
                 <div class="mb-3">
                     <label>Sejarah Wisata</label>
                     <textarea name="sejarah" class="form-control" rows="3"></textarea>
+                    <small class="form-text text-muted">Asal usul tempat wisata</small>
                 </div>
                 <div class="mb-3">
                     <label>Narasi Wisata</label>
                     <textarea name="narasi" class="form-control" rows="3"></textarea>
+                    <small class="form-text text-muted">Narasi opsional yang akan dibacakan</small>
                 </div>
-                <div class="row">
-                    <div class="mb-3">
-                        <label class="fw-bold">Jam Operasional</label>
-                        <div class="row">
+
+                <div class="mb-4">
+                    <label class="fw-bold mb-2">Jam Operasional</label>
+                    <div class="alert alert-info">
+                        <strong>Petunjuk:</strong>
+                        <ul class="mb-0">
+                            <li>Jam default: 00:00 – 23:59</li>
+                            <li>Centang "Libur" jika tempat tidak buka hari itu</li>
+                        </ul>
+                    </div>
+                    <table class="table table-bordered text-center align-middle table-sm" style="font-size: 0.9rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 25%;">Hari</th>
+                                <th style="width: 25%;">Jam Buka</th>
+                                <th style="width: 25%;">Jam Tutup</th>
+                                <th style="width: 15%;">Libur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             @php
                                 $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
                             @endphp
-
-                            @foreach ($days as $index => $day)
-                                <div class="col-md-12 mb-2">
-                                    <div class="d-flex align-items-center">
-                                        <label class="me-2" style="width:80px">{{ $day }}</label>
-
-                                        <span class="me-2">Buka</span>
-                                        <input type="time" name="jam_buka[{{ $day }}]"
-                                            class="form-control me-2" style="max-width:150px">
-
-                                        <span class="me-2">Tutup</span>
-                                        <input type="time" name="jam_tutup[{{ $day }}]"
-                                            class="form-control me-2" style="max-width:150px">
-
-                                        <div class="form-check ms-3">
-                                            <input class="form-check-input tutup-check" type="checkbox"
-                                                name="libur[{{ $day }}]" value="1"
-                                                id="libur_{{ $day }}">
-                                            <label class="form-check-label" for="libur_{{ $day }}">
-                                                Libur
-                                            </label>
+                            @foreach ($days as $day)
+                                <tr>
+                                    <td class="py-1 px-2">
+                                        <input type="text" name="hari[]"
+                                            class="form-control form-control-sm text-center" value="{{ $day }}"
+                                            readonly>
+                                    </td>
+                                    <td class="py-1 px-2">
+                                        <input type="time" name="jam_buka[]" class="form-control form-control-sm"
+                                            value="00:00">
+                                    </td>
+                                    <td class="py-1 px-2">
+                                        <input type="time" name="jam_tutup[]" class="form-control form-control-sm"
+                                            value="23:59">
+                                    </td>
+                                    <td class="py-1 px-2">
+                                        <div class="form-check d-flex justify-content-center align-items-center">
+                                            <input class="form-check-input libur-check" type="checkbox" name="libur[]"
+                                                value="{{ $loop->index }}">
                                         </div>
-                                    </div>
-                                </div>
+                                    </td>
+                                </tr>
                             @endforeach
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                            document.querySelectorAll(".tutup-check").forEach(function(checkbox) {
-                                checkbox.addEventListener("change", function() {
-                                    let row = this.closest(".d-flex");
-                                    let inputs = row.querySelectorAll("input[type='time']");
-                                    if (this.checked) {
-                                        inputs.forEach(i => {
-                                            i.disabled = true;
-                                            i.value = '';
-                                        });
-                                    } else {
-                                        inputs.forEach(i => {
-                                            i.disabled = false;
-                                        });
-                                    }
-                                });
-                            });
-                        });
-                    </script>
-                    <div class="col-md-6 mb-3">
-                        <label>Upload Foto</label>
-                        <input type="file" name="foto[]" class="form-control" multiple>
-                    </div>
+                <div class="mb-3">
+                    <label>Upload Foto</label>
+                    <input type="file" name="foto[]" class="form-control" multiple>
+                    <small class="form-text text-muted">Bisa upload beberapa foto. Maks 2MB per file.</small>
                 </div>
 
                 <div class="text-center mt-4">
@@ -159,6 +150,31 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const rows = document.querySelectorAll("table tbody tr");
+
+            rows.forEach((row, index) => {
+                const liburCheckbox = row.querySelector(".libur-check");
+                const bukaInput = row.querySelector("input[name='jam_buka[]']");
+                const tutupInput = row.querySelector("input[name='jam_tutup[]']");
+
+                liburCheckbox.addEventListener("change", function() {
+                    const isLibur = this.checked;
+                    bukaInput.disabled = isLibur;
+                    tutupInput.disabled = isLibur;
+                    if (isLibur) {
+                        bukaInput.value = '00:00';
+                        tutupInput.value = '00:00';
+                    } else {
+                        bukaInput.value = '00:00';
+                        tutupInput.value = '23:59';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

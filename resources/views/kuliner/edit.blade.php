@@ -10,7 +10,7 @@
             font-family: 'Inknut Antiqua', serif;
             background: url("{{ asset('images/bg-view.png') }}") no-repeat center center fixed;
             background-size: cover;
-            display: flex;
+            display: block;
             justify-content: center;
             align-items: center;
         }
@@ -64,7 +64,7 @@
                         value="{{ old('nama_usaha', $kuliner->nama_usaha) }}">
                 </div>
                 <div class="row">
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-2 mb-3">
                         <label class="form-label">Tahun Berdiri</label>
                         <input type="number" name="tahun_berdiri" class="form-control"
                             value="{{ old('tahun_berdiri', $kuliner->tahun_berdiri) }}">

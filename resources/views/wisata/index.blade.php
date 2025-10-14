@@ -23,7 +23,12 @@
         <h2 class="mb-4 text-center">Daftar Tempat Wisata</h2>
 
         <div class="mb-3 d-flex justify-content-between">
-            <a href="{{ route('dashboard') }}" class="btn btn-secondary">← Kembali ke Dashboard</a>
+            @php $role = auth()->user()->role; @endphp
+            @if ($role === 'Super Admin')
+                <a href="{{ route('dashboard.superadmin') }}" class="btn btn-secondary">← Kembali ke Dashboard</a>
+            @elseif ($role === 'Admin')
+                <a href="{{ route('dashboard.admin') }}" class="btn btn-secondary">← Kembali ke Dashboard</a>
+            @endif
             <a href="{{ route('wisata.create') }}" class="btn btn-success">+ Tambah Wisata</a>
         </div>
 
@@ -31,6 +36,8 @@
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
+
+        <a href="{{ route('export.excel', ['tipe' => 'wisata']) }}" class="btn btn-success">Export Wisata</a>
 
         <!-- Tabel -->
         <table class="table table-bordered table-striped">
@@ -49,7 +56,7 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $w->nama_wisata }}</td>
-                        <td>{{ $w->kategori_wisata }}</td>
+                        <td>{{ $w->kategori->nama_kategori }}</td>
                         <td>{{ $w->latitude }}</td>
                         <td>{{ $w->longitude }}</td>
                         <td>

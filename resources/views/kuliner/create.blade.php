@@ -10,7 +10,7 @@
             font-family: 'Inknut Antiqua', serif;
             background: url("{{ asset('images/bg-view.png') }}") no-repeat center center fixed;
             background-size: cover;
-            display: flex;
+            display: block;
             justify-content: center;
             align-items: center;
         }
@@ -216,21 +216,25 @@
 
                 <!-- Sertifikasi -->
                 <div class="mb-3">
-                    <label class="form-label">Sertifikasi</label><br>
-                    <label class="me-3">
-                        <input type="checkbox" name="sertifikasi[]" value="PIRT"> PIRT
-                    </label>
-                    <label class="me-3">
-                        <input type="checkbox" name="sertifikasi[]" value="BPOM"> BPOM
-                    </label>
-                    <label class="me-3">
-                        <input type="checkbox" name="sertifikasi[]" value="Halal"> Halal
-                    </label>
-                    <label class="me-3 d-flex align-items-center">
-                        <input type="checkbox" name="sertifikasi[]" value="Dll:"> Dll
-                        <input type="text" name="sertifikasi_dll" class="form-control ms-2" style="width:150px;"
-                            placeholder="Isi sertifikasi lain">
-                    </label>
+                    <label class="form-label">Sertifikasi</label>
+                    <div class="d-flex gap-3 align-items-center flex-wrap">
+                        <label class="mb-0">
+                            <input type="checkbox" name="sertifikasi[]" value="PIRT"> PIRT
+                        </label>
+                        <label class="mb-0">
+                            <input type="checkbox" name="sertifikasi[]" value="BPOM"> BPOM
+                        </label>
+                        <label class="mb-0">
+                            <input type="checkbox" name="sertifikasi[]" value="Halal"> Halal
+                        </label>
+                        <div class="d-flex align-items-center">
+                            <label class="mb-0 me-2">
+                                <input type="checkbox" name="sertifikasi[]" value="Dll"> Dll
+                            </label>
+                            <input type="text" name="sertifikasi_dll" class="form-control form-control-sm"
+                                style="width: 150px;" placeholder="Isi sertifikasi lain">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -248,18 +252,22 @@
 
                 <!-- Program Pemerintah -->
                 <div class="mb-3">
-                    <label class="form-label">Program Pemerintah</label><br>
-                    <label class="me-3">
-                        <input type="checkbox" name="program_pemerintah[]" value="Kuliner Sehat"> Kuliner Sehat
-                    </label>
-                    <label class="me-3">
-                        <input type="checkbox" name="program_pemerintah[]" value="UMKM Binaan"> UMKM Binaan
-                    </label>
-                    <label class="me-3 d-flex align-items-center">
-                        <input type="checkbox" name="program_pemerintah[]" value="DII:"> DII
-                        <input type="text" name="program_dii" class="form-control ms-2" style="width:150px;"
-                            placeholder="No. DII">
-                    </label>
+                    <label class="form-label">Program Pemerintah</label>
+                    <div class="d-flex gap-3 align-items-center flex-wrap">
+                        <label class="mb-0">
+                            <input type="checkbox" name="program_pemerintah[]" value="Kuliner Sehat"> Kuliner Sehat
+                        </label>
+                        <label class="mb-0">
+                            <input type="checkbox" name="program_pemerintah[]" value="UMKM Binaan"> UMKM Binaan
+                        </label>
+                        <div class="d-flex align-items-center">
+                            <label class="mb-0 me-2">
+                                <input type="checkbox" name="program_pemerintah[]" value="Dll"> Dll
+                            </label>
+                            <input type="text" name="program_dll" class="form-control form-control-sm"
+                                style="width: 150px;" placeholder="Isi program lain">
+                        </div>
+                    </div>
                 </div>
             </div>
 

@@ -49,6 +49,21 @@
             background-color: #15477a;
         }
 
+        /* Submenu */
+        .submenu {
+            display: none;
+            background-color: #123456;
+        }
+
+        .submenu a {
+            padding-left: 40px;
+            font-size: 14px;
+        }
+
+        .submenu.show {
+            display: block;
+        }
+
         /* Peta */
         #map {
             height: 500px;
@@ -86,20 +101,27 @@
 <body>
 
     <!-- Header -->
-    <div class="header">
-        Kotabaru Tourism Data Center
+    <div class="header d-flex align-items-center justify-content-between px-4">
+        <div class="d-flex align-items-center gap-3">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo Kotabaru" style="height: 50px;">
+            <h1 class="mb-0" style="font-size: 22px;">Kotabaru Tourism Data Center</h1>
+        </div>
     </div>
 
     <!-- Layout -->
     <div class="row g-0">
         <!-- Sidebar -->
         <div class="col-md-2 sidebar">
-            <a href="{{ route('dashboard') }}" class="active">
+            <a href="{{ route('dashboard.admin') }}" class="active">
                 <i class="bi bi-house-door-fill me-2"></i> Dashboard
             </a>
-            <a href="{{ route('wisata.index') }}">
+            <a href="#" id="wisataMenu">
                 <i class="bi bi-building me-2"></i> Tempat Wisata
             </a>
+            <div class="submenu" id="submenuWisata">
+                <a href="{{ route('wisata.index') }}"><i class="bi bi-list-ul me-2"></i> Daftar Wisata</a>
+                <a href="{{ route('kategori-wisata.index') }}"><i class="bi bi-tags me-2"></i> Kategori Wisata</a>
+            </div>
             <a href="{{ route('kuliner.index') }}">
                 <i class="bi bi-egg-fried me-2"></i> Tempat Kuliner
             </a>
@@ -131,10 +153,16 @@
                 </div>
 
                 <script>
+                    // Submenu toggle
+                    document.getElementById("wisataMenu").addEventListener("click", function(e) {
+                        e.preventDefault();
+                        document.getElementById("submenuWisata").classList.toggle("show");
+                    });
+
                     var map = L.map('map').setView([-7.78694, 110.375], 15);
 
                     L.tileLayer('https://cartodb-basemaps-a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+                        attribution: '&copy; OpenStreetMap &copy; CARTO',
                         subdomains: 'abcd',
                         maxZoom: 20
                     }).addTo(map);
@@ -150,12 +178,14 @@
                                 iconAnchor: [16, 32],
                                 popupAnchor: [0, -32]
                             });
-                            var marker = L.marker([{{ $w->latitude }}, {{ $w->longitude }}], { icon:wisataIcon }).addTo(map);
+                            var marker = L.marker([{{ $w->latitude }}, {{ $w->longitude }}], {
+                                icon: wisataIcon
+                            }).addTo(map);
 
                             marker.on('click', function() {
                                 showDetail("wisata-{{ $w->id_wisata }}", {
                                     nama: "{{ $w->nama_wisata }}",
-                                    kategori: "{{ $w->kategori_wisata }}",
+                                    kategori: "{{ $w->kategori_wisata->nama_kategori ?? '-' }}",
                                     deskripsi: "{{ $w->deskripsi ?? '-' }}",
                                     link: "{{ route('wisata.show', $w->id_wisata) }}",
                                     jam: `{!! collect($w->jamOperasional)->map(function ($jam) {
@@ -182,13 +212,14 @@
                                 iconAnchor: [16, 32],
                                 popupAnchor: [0, -32]
                             });
-                            var marker = L.marker([{{ $k->latitude }}, {{ $k->longitude }}], { icon:kulinerIcon }).addTo(map);
+                            var marker = L.marker([{{ $k->latitude }}, {{ $k->longitude }}], {
+                                icon: kulinerIcon
+                            }).addTo(map);
 
                             marker.on('click', function() {
                                 showDetail("kuliner-{{ $k->id_kuliner }}", {
                                     nama: "{{ $k->nama_usaha }}",
                                     kategori: "{{ $k->kategori_utama ?? '-' }}",
-                                    deskripsi: "{{ $k->menu_unggulan ?? '-' }}",
                                     link: "{{ route('kuliner.show', $k->id_kuliner) }}",
                                     jam: `{!! collect($k->jamOperasional)->map(function ($jam) {
                                             return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
@@ -224,7 +255,7 @@
 
                             document.getElementById('detail-nama').innerText = data.nama;
                             document.getElementById('detail-kategori').innerText = data.kategori;
-                            document.getElementById('detail-deskripsi').innerText = data.deskripsi;
+                            document.getElementById('detail-deskripsi').innerText = data.deskripsi ?? '';
                             document.getElementById('detail-link').href = data.link;
                             document.getElementById('detail-jam').innerHTML = data.jam;
                             document.getElementById('detail-foto').innerHTML = data.foto;
@@ -254,8 +285,6 @@
             </div>
         </div>
     </div>
-
-
 </body>
 
 </html>

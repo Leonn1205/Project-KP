@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('jam_operasional_wisata', function (Blueprint $table) {
-        $table->id();
+        $table->id("id_jam_operasional");
         $table->unsignedBigInteger('id_wisata');
         $table->enum('hari', ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']);
         $table->time('jam_buka')->nullable();
@@ -26,7 +26,7 @@ return new class extends Migration
             ->on('tempat_wisata')
             ->onUpdate('cascade')
             ->onDelete('cascade');
-            });
+        });
     }
 
     /**

@@ -18,9 +18,22 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard_user');
+            $user = Auth::user();
+
+            switch ($user->role) {
+                case 'Super Admin':
+                    return redirect()->route('dashboard.superadmin');
+                case 'Admin':
+                    return redirect()->route('dashboard.admin');
+                default:
+                    Auth::logout(); // mencegah login role yang tidak sah
+                    return redirect()->route('login')->withErrors([
+                        'username' => 'Role tidak valid.',
+                    ]);
+            }
         }
 
+        // Jangan ulangi Auth::attempt lagi
         return back()->withErrors([
             'username' => 'Username atau password salah.',
         ]);

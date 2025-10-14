@@ -15,14 +15,20 @@ return new class extends Migration
     {
         Schema::create('tempat_wisata', function (Blueprint $table) {
             $table->id('id_wisata');
+            $table->unsignedBigInteger("id_kategori");
             $table->string('nama_wisata');
-            $table->string('kategori_wisata');
             $table->decimal('longitude', 10, 6)->nullable();
             $table->decimal('latitude', 10, 6)->nullable();
             $table->text('deskripsi')->nullable();
             $table->text('sejarah')->nullable();
             $table->text('narasi')->nullable(); // bisa dipakai untuk teks / audio
             $table->timestamps();
+
+            $table->foreign('id_kategori')
+            ->references('id_kategori')
+            ->on('kategori_wisata')
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
         });
     }
 

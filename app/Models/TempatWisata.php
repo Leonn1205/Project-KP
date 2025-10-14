@@ -9,7 +9,7 @@ class TempatWisata extends Model
     protected $table = 'tempat_wisata';
     protected $primaryKey = 'id_wisata';
     protected $fillable = [
-        'nama_wisata', 'kategori_wisata', 'longitude', 'latitude', 'deskripsi', 'sejarah', 'narasi'
+        'nama_wisata', 'id_kategori', 'longitude', 'latitude', 'deskripsi', 'sejarah', 'narasi'
     ];
 
     public function jamOperasional()
@@ -20,5 +20,10 @@ class TempatWisata extends Model
     public function foto()
     {
         return $this->hasMany(FotoWisata::class, 'id_wisata');
+    }
+
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriWisata::class, 'id_kategori');
     }
 }
