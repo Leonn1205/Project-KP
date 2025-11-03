@@ -14,6 +14,33 @@
             justify-content: center;
             align-items: center;
         }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border: none;
+        }
+
+        .btn-warning {
+            background-color: #f0ad4e;
+            border: none;
+        }
+
+        .btn-danger {
+            background-color: #d9534f;
+            border: none;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            transition: all 0.2s ease-in-out;
+        }
     </style>
 </head>
 
@@ -59,14 +86,26 @@
                         <td>{{ $w->kategori->nama_kategori }}</td>
                         <td>{{ $w->latitude }}</td>
                         <td>{{ $w->longitude }}</td>
-                        <td>
-                            <a href="{{ route('wisata.edit', $w->id_wisata) }}" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="{{ route('wisata.destroy', $w->id_wisata) }}" method="POST"
-                                class="d-inline">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Yakin hapus?')">Hapus</button>
-                            </form>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <a href="{{ route('wisata.show', $w->id_wisata) }}"
+                                    class="btn btn-info btn-sm shadow-sm">
+                                    <i class="bi bi-eye"></i> Detail
+                                </a>
+                                <a href="{{ route('wisata.edit', $w->id_wisata) }}"
+                                    class="btn btn-warning btn-sm shadow-sm text-white">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <form action="{{ route('wisata.destroy', $w->id_wisata) }}" method="POST"
+                                    onsubmit="return confirm('Yakin ingin menghapus data ini?')"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm shadow-sm">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty

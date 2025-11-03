@@ -51,7 +51,7 @@ class TempatKulinerController extends Controller
         $data['sertifikasi'] = $sertifikasi;
 
         $program = $request->input('program_pemerintah', []);
-        if (in_array('Lainnya', $program)) {
+        if (in_array('Dll', $program)) {
             $dll = trim($request->input('program_dll'));
             $key = array_search('Dll', $program);
             $program[$key] = $dll ? 'Dll: ' . $dll : 'Dll';
@@ -73,13 +73,15 @@ class TempatKulinerController extends Controller
         }
 
         // Simpan jam operasional
-        if ($request->jam_buka) {
-            foreach ($request->jam_buka as $hari => $buka) {
+        if ($request->filled('hari')) {
+            foreach ($request->hari as $index => $hari) {
+                $isLibur = isset($request->libur[$index]) && $request->libur[$index] == 1;
+
                 JamOperasionalKuliner::create([
                     'id_kuliner' => $kuliner->id_kuliner,
-                    'hari' => $hari,
-                    'jam_buka' => isset($request->libur[$hari]) ? null : $buka,
-                    'jam_tutup' => isset($request->libur[$hari]) ? null : ($request->jam_tutup[$hari] ?? null),
+                    'hari'      => $hari,
+                    'jam_buka'  => $isLibur ? null : ($request->jam_buka[$index] ?? null),
+                    'jam_tutup' => $isLibur ? null : ($request->jam_tutup[$index] ?? null),
                 ]);
             }
         }

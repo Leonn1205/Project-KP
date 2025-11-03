@@ -182,12 +182,12 @@
                         <label class="form-label">Pengelolaan Limbah</label><br>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" name="pengelolaan_limbah[]"
-                                value="Seasonal">
+                                value="Organik">
                             <label class="form-check-label">Organik</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" name="pengelolaan_limbah[]"
-                                value="Tetap">
+                                value="Non-Organik">
                             <label class="form-check-label">Non-Organik</label>
                         </div>
                     </div>
@@ -311,35 +311,48 @@
                 </div>
 
                 <!-- Jam operasional -->
-                <div class="mb-3">
-                    <label class="fw-bold">Jam Operasional</label>
-                    <div class="row">
-                        @php
-                            $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-                        @endphp
-                        @foreach ($days as $day)
-                            <div class="col-md-12 mb-2">
-                                <div class="d-flex align-items-center flex-wrap">
-                                    <label class="me-2" style="width:80px">{{ $day }}</label>
-
-                                    <span class="me-2">Buka</span>
-                                    <input type="time" name="jam_buka[{{ $day }}]"
-                                        class="form-control me-2" style="max-width:150px;">
-
-                                    <span class="me-2">Tutup</span>
-                                    <input type="time" name="jam_tutup[{{ $day }}]"
-                                        class="form-control me-2" style="max-width:150px;">
-
-                                    <div class="form-check ms-3">
-                                        <input class="form-check-input tutup-check" type="checkbox"
-                                            name="libur[{{ $day }}]" value="1"
-                                            id="libur_{{ $day }}">
-                                        <label class="form-check-label" for="libur_{{ $day }}">Libur</label>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+                <div class="mb-4">
+                    <label class="fw-bold mb-2">Jam Operasional</label>
+                    <div class="alert alert-info">
+                        <strong>Petunjuk:</strong>
+                        <ul class="mb-0">
+                            <li>Jam default: 00:00 – 23:59</li>
+                            <li>Centang "Libur" jika tempat tidak buka hari itu</li>
+                        </ul>
                     </div>
+                    <table class="table table-bordered text-center align-middle table-sm" style="font-size: 0.9rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 25%;">Hari</th>
+                                <th style="width: 25%;">Jam Buka</th>
+                                <th style="width: 25%;">Jam Tutup</th>
+                                <th style="width: 15%;">Libur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                                $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                            @endphp
+                            @foreach ($days as $day)
+                                <tr>
+                                    <td class="py-1 px-2">
+                                        <input type="text" name="hari[]" class="form-control form-control-sm text-center" value="{{ $day }}" readonly>
+                                    </td>
+                                    <td class="py-1 px-2">
+                                        <input type="time" name="jam_buka[]" class="form-control form-control-sm" value="00:00">
+                                    </td>
+                                    <td class="py-1 px-2">
+                                        <input type="time" name="jam_tutup[]" class="form-control form-control-sm" value="23:59">
+                                    </td>
+                                    <td class="py-1 px-2">
+                                        <div class="form-check d-flex justify-content-center align-items-center">
+                                            <input class="form-check-input libur-check" type="checkbox" name="libur[]" value="{{ $loop->index }}">
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
 
                 <!-- Metode transaksi -->
@@ -360,26 +373,29 @@
             </div>
 
             <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    document.querySelectorAll(".tutup-check").forEach(function(checkbox) {
-                        checkbox.addEventListener("change", function() {
-                            let row = this.closest(".d-flex");
-                            let inputs = row.querySelectorAll("input[type='time']");
-                            if (this.checked) {
-                                inputs.forEach(i => {
-                                    i.disabled = true;
-                                    i.value = '';
-                                });
+                document.addEventListener("DOMContentLoaded", function () {
+                    const rows = document.querySelectorAll("table tbody tr");
+
+                    rows.forEach((row) => {
+                        const liburCheckbox = row.querySelector(".libur-check");
+                        const bukaInput = row.querySelector("input[name='jam_buka[]']");
+                        const tutupInput = row.querySelector("input[name='jam_tutup[]']");
+
+                        liburCheckbox.addEventListener("change", function () {
+                            const isLibur = this.checked;
+                            bukaInput.disabled = isLibur;
+                            tutupInput.disabled = isLibur;
+                            if (isLibur) {
+                                bukaInput.value = '00:00';
+                                tutupInput.value = '00:00';
                             } else {
-                                inputs.forEach(i => {
-                                    i.disabled = false;
-                                });
+                                bukaInput.value = '00:00';
+                                tutupInput.value = '23:59';
                             }
                         });
                     });
                 });
             </script>
-
 
             <!-- 7. Longlat -->
             <div class="section">

@@ -36,13 +36,34 @@
         }
 
         .btn-submit {
-            display: block;
-            margin: 20px auto;
-            background: #1e3932;
-            color: white;
-            border-radius: 10px;
-            padding: 10px 30px;
+            background-color: #1e3932;
+            color: #fff;
+            font-weight: bold;
             border: none;
+            border-radius: 8px;
+            padding: 10px 30px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #2d5447;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background-color: #b0b0b0;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 30px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-cancel:hover {
+            background-color: #8c8c8c;
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -344,7 +365,14 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit">Update</button>
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-submit me-3 px-4">
+                    <i class="bi bi-save me-1"></i> Update
+                </button>
+                <a href="{{ route('wisata.index') }}" class="btn btn-cancel px-4">
+                    <i class="bi bi-x-circle me-1"></i> Batal
+                </a>
+            </div>
         </form>
     </div>
 </body>

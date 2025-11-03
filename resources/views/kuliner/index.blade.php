@@ -14,6 +14,33 @@
             justify-content: center;
             align-items: center;
         }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border: none;
+        }
+
+        .btn-warning {
+            background-color: #f0ad4e;
+            border: none;
+        }
+
+        .btn-danger {
+            background-color: #d9534f;
+            border: none;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            transition: all 0.2s ease-in-out;
+        }
     </style>
 </head>
 
@@ -36,7 +63,6 @@
             <thead class="table-dark">
                 <tr>
                     <th>Nama Usaha</th>
-                    <th>Tahun Berdiri</th>
                     <th>Lokasi</th>
                     <th>Latitude</th>
                     <th>Longitude</th>
@@ -47,20 +73,29 @@
                 @foreach ($kuliner as $k)
                     <tr>
                         <td>{{ $k->nama_usaha }}</td>
-                        <td>{{ $k->tahun_berdiri }}</td>
                         <td>{{ $k->lokasi_lengkap }}</td>
                         <td>{{ $k->latitude }}</td>
                         <td>{{ $k->longitude }}</td>
-                        <td>
-                            <a href="{{ route('kuliner.show', $k->id_kuliner) }}" class="btn btn-info btn-sm">Detail</a>
-                            <a href="{{ route('kuliner.edit', $k->id_kuliner) }}"
-                                class="btn btn-warning btn-sm">Edit</a>
-                            <form action="{{ route('kuliner.destroy', $k->id_kuliner) }}" method="POST"
-                                class="d-inline">
-                                @csrf @method('DELETE')
-                                <button type="submit" onclick="return confirm('Yakin hapus?')"
-                                    class="btn btn-danger btn-sm">Hapus</button>
-                            </form>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <a href="{{ route('kuliner.show', $k->id_kuliner) }}"
+                                    class="btn btn-info btn-sm shadow-sm">
+                                    <i class="bi bi-eye"></i> Detail
+                                </a>
+                                <a href="{{ route('kuliner.edit', $k->id_kuliner) }}"
+                                    class="btn btn-warning btn-sm shadow-sm text-white">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <form action="{{ route('kuliner.destroy', $k->id_kuliner) }}" method="POST"
+                                    onsubmit="return confirm('Yakin ingin menghapus data ini?')"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm shadow-sm">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @endforeach

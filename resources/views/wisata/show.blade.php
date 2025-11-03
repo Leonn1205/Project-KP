@@ -7,77 +7,152 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: #f4f6f9;
-            font-family: Arial, sans-serif;
+            font-family: 'Inknut Antiqua', serif;
+            background: url("{{ asset('images/bg-view.png') }}") no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
         }
 
         .container {
             max-width: 900px;
             margin: 40px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 15px;
+            padding: 25px 35px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
 
-        h2 {
-            color: #2f5233;
+        h1 {
+            color: #1e3932;
             font-weight: bold;
+            border-bottom: 3px solid #1e3932;
+            padding-bottom: 8px;
         }
 
-        h6 {
-            margin-top: 20px;
-            color: #0d3059;
-            font-weight: 600;
+        h3 {
+            color: #2c2c2c;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 4px;
+            margin-top: 25px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #444;
+        }
+
+        .photos img {
+            width: 160px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin: 6px;
         }
 
         .btn-back {
-            margin-top: 20px;
-            background: #0d3059;
+            background: #1e3932;
             color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 20px;
         }
 
         .btn-back:hover {
-            background: #15477a;
+            background: #2d5447;
+        }
+
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .table th {
+            background-color: #1e3932;
+            color: #fff;
         }
     </style>
 </head>
 
 <body>
+
     <div class="container">
-        <h2>{{ $wisata->nama_wisata }}</h2>
-        <p><b>Kategori:</b> {{ $wisata->kategori_wisata }}</p>
-        <p>{{ $wisata->deskripsi ?? 'Belum ada deskripsi.' }}</p>
+        <h1>{{ $wisata->nama_wisata }}</h1>
 
-        <h6>Jam Operasional</h6>
-        <ul>
-            @forelse($wisata->jamOperasional as $jam)
-                <li>
-                    <b>{{ $jam->hari }}:</b>
-                    @if (!$jam->jam_buka && !$jam->jam_tutup)
-                        Libur
-                    @else
-                        {{ $jam->jam_buka ?? '-' }} - {{ $jam->jam_tutup ?? '-' }}
-                    @endif
-                </li>
-            @empty
-                <li>Belum ada data jam operasional</li>
-            @endforelse
-        </ul>
+        {{-- Identitas Wisata --}}
+        <h3>Informasi Umum</h3>
+        <div class="section">
+            <p><span class="label">Nama Tempat Wisata:</span> {{ $wisata->nama_wisata ?? '-' }}</p>
+            <p><span class="label">Kategori Wisata:</span> {{ $wisata->kategori->nama_kategori ?? '-' }}</p>
+            <p><span class="label">Deskripsi:</span> {{ $wisata->deskripsi ?? '-' }}</p>
+            <p><span class="label">Sejarah:</span> {{ $wisata->sejarah ?? '-' }}</p>
+            <p><span class="label">Narasi:</span> {{ $wisata->narasi ?? '-' }}</p>
+        </div>
 
-        <h6>Foto</h6>
-        <div class="row">
-            @forelse($wisata->foto as $f)
-                <div class="col-md-4 mb-3">
-                    <img src="{{ asset('storage/' . $f->path_foto) }}" class="img-fluid rounded shadow-sm">
-                </div>
+        {{-- Koordinat --}}
+        <h3>Koordinat Lokasi</h3>
+        <div class="section">
+            <p><span class="label">Latitude:</span> {{ $wisata->latitude ?? '-' }}</p>
+            <p><span class="label">Longitude:</span> {{ $wisata->longitude ?? '-' }}</p>
+        </div>
+
+        {{-- Jam Operasional --}}
+        <h3>Jam Operasional</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Hari</th>
+                    <th>Jam Buka</th>
+                    <th>Jam Tutup</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($wisata->jamOperasional as $jam)
+                    <tr>
+                        <td>{{ $jam->hari }}</td>
+                        <td>{{ $jam->jam_buka ?? '-' }}</td>
+                        <td>{{ $jam->jam_tutup ?? '-' }}</td>
+                        <td>
+                            @if (($jam->jam_buka == '00:00' && $jam->jam_tutup == '00:00') || !$jam->jam_buka)
+                                Libur
+                            @else
+                                Buka
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4">Belum ada data jam operasional</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        {{-- Foto --}}
+        <h3>Foto Wisata</h3>
+        <div class="photos">
+            @forelse ($wisata->foto as $foto)
+                <img src="{{ asset('storage/' . $foto->path_foto) }}" alt="Foto {{ $wisata->nama_wisata }}">
             @empty
                 <p>Belum ada foto untuk tempat wisata ini.</p>
             @endforelse
         </div>
 
-        <a href="{{ route('dashboard') }}" class="btn btn-back">← Kembali</a>
+        {{-- Tombol Kembali --}}
+        <div class="text-center mt-4">
+            <a href="{{ route('wisata.index') }}" class="btn btn-back">← Kembali ke Daftar Wisata</a>
+        </div>
     </div>
+
 </body>
 
 </html>
