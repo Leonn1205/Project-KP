@@ -62,6 +62,7 @@
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
                 <tr>
+                    <th>No</th>
                     <th>Nama Usaha</th>
                     <th>Lokasi</th>
                     <th>Latitude</th>
@@ -70,8 +71,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($kuliner as $k)
+                @foreach ($kuliner as $index => $k)
                     <tr>
+                        <td>{{ $index + 1 }}</td>
                         <td>{{ $k->nama_usaha }}</td>
                         <td>{{ $k->lokasi_lengkap }}</td>
                         <td>{{ $k->latitude }}</td>

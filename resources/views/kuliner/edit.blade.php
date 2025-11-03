@@ -369,7 +369,7 @@
                 <button type="submit" class="btn btn-submit me-3 px-4">
                     <i class="bi bi-save me-1"></i> Update
                 </button>
-                <a href="{{ route('wisata.index') }}" class="btn btn-cancel px-4">
+                <a href="{{ route('kuliner.index') }}" class="btn btn-cancel px-4">
                     <i class="bi bi-x-circle me-1"></i> Batal
                 </a>
             </div>
